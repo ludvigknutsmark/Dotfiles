@@ -137,9 +137,9 @@ bindsym Mod1+Shift+r restart
 bindsym Mod1+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume 0 +5% #increase sound volume
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume 0 -5% #decrease sound volume
-bindsym XF86AudioMute exec pactl set-sink-mute 0 toggle # mute sound
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume 1 +5% #increase sound volume
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume 1 -5% #decrease sound volume
+bindsym XF86AudioMute exec pactl set-sink-mute 1 toggle # mute sound
 
 # Screen brightness
 bindsym XF86MonBrightnessUp exec xbacklight -inc 20 # increase screen brightness
@@ -151,6 +151,9 @@ bindsym XF86KbdBrightnessDown exec kbdbacklight down
 
 # Lock screen config
 bindsym Mod1+shift+x exec lock
+
+# Screenshot tool
+bindsym --release Shift+Print exec "scrot -s '/home/ludvig/Pictures/screenshots/%s_%H%M_%d%m%Y_$wx$h.png'"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -178,10 +181,10 @@ mode "resize" {
 
 bindsym Mod1+r mode "resize"
 
-set $bg-color 	         #2f343f
-set $inactive-bg-color   #2f343f
-set $text-color          #f3f4f5
-set $inactive-text-color #676E7D
+set $bg-color 	         #ffdab9
+set $inactive-bg-color   #456789
+set $text-color          #000000
+set $inactive-text-color #000000
 set $urgent-bg-color     #E53935
 
 # window colors
@@ -194,24 +197,35 @@ client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color      
 hide_edge_borders both
 
 # start dmenu (a program launcher)
-bindsym Mod1+d exec rofi -show run --lines 3 -eh 2 -opacity -theme ".config/arc-dark" font "System San Fransisco Display 13"
+bindsym Mod1+d exec rofi -show run --lines 3 -eh 2 -opacity -theme ".config/rofi_themes/gruvbox-light-soft" font "System San Fransisco Display 13"
 
 # Dual monitor setup
-exec xrandr | grep 'HDMI1 connected' && xrandr --output eDP1 --auto --output HDMI1 --auto --right-of eDP1
+exec --no-startup-id display-visor
 
-exec --no-startup-id display-visor -f -l
+# Setup background image
+exec --no-startup-id nitrogen --restore
+
+# Start polybar
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+
+# Remove the title bar
+new_window 1pixel
+
+# Compton stuff
+exec --no-startup-id $HOME/.config/compton/launch.sh
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-        status_command i3status
-	colors {
-		background $bg-color
-	    	separator #757575
-		#                  border             background         text
-		focused_workspace  $bg-color          $bg-color          $text-color
-		inactive_workspace $inactive-bg-color $inactive-bg-color $inactive-text-color
-		urgent_workspace   $urgent-bg-color   $urgent-bg-color   $text-color
-	}	
-}
+#bar {
+#        status_command i3status
+#	colors {
+#		background $bg-color
+#	    	separator #757575
+#		#                  border             background         text
+#		focused_workspace  $bg-color          $bg-color          $text-color
+#		inactive_workspace $inactive-bg-color $inactive-bg-color $inactive-text-color
+#		urgent_workspace   $urgent-bg-color   $urgent-bg-color   $text-color
+#	}	
+#}
 
-exec_always compton -f
+
